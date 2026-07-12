@@ -147,7 +147,7 @@ function AppContent() {
 
         {/* Sidebar — slides in from left via translate-x */}
         <nav className={cn(
-          "z-40 flex flex-col justify-start items-stretch bg-pop-black border-r-4 border-white h-full w-64 fixed top-0 left-0 transition-transform duration-300 pt-16",
+          "z-40 flex flex-col justify-start items-stretch bg-pop-black border-r-4 border-white h-full w-64 sm:w-72 fixed top-0 left-0 transition-transform duration-300 pt-16",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           {/* Close button inside sidebar */}
@@ -158,12 +158,12 @@ function AppContent() {
             <X className="w-6 h-6" />
           </button>
           {/* Logo */}
-          <div className="flex flex-col items-center justify-center p-6 mb-8 bg-stripes-cyan-pink clip-diagonal mx-4 shadow-pop-pink pop-border">
-            <h1 className="text-3xl font-black italic text-white text-stroke-sm -skew-x-12">DEBT</h1>
-            <h1 className="text-4xl font-black italic text-pop-yellow text-stroke -skew-x-12 mt-1 drop-shadow-[4px_4px_0_#ff3366]">CLUB</h1>
+          <div className="flex flex-col items-center justify-center p-4 sm:p-6 mb-6 sm:mb-8 bg-stripes-cyan-pink clip-diagonal mx-4 shadow-pop-pink pop-border">
+            <h1 className="text-2xl sm:text-3xl font-black italic text-white text-stroke-sm -skew-x-12">DEBT</h1>
+            <h1 className="text-3xl sm:text-4xl font-black italic text-pop-yellow text-stroke -skew-x-12 mt-1 drop-shadow-[4px_4px_0_#ff3366]">CLUB</h1>
           </div>
 
-          <div className="flex flex-col w-full px-4 gap-4 h-auto items-stretch">
+          <div className="flex flex-col w-full px-4 gap-3 sm:gap-4 h-auto items-stretch">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
               const Icon = item.icon;
@@ -175,16 +175,16 @@ function AppContent() {
                     setIsSidebarOpen(false);
                   }}
                   className={cn(
-                    "relative flex-none flex flex-row items-center justify-start gap-4 p-4 transition-all duration-200 group pop-border overflow-hidden",
+                    "relative flex-none flex flex-row items-center justify-start gap-3 sm:gap-4 p-3 sm:p-4 transition-all duration-200 group pop-border overflow-hidden",
                     isActive ? "bg-pop-yellow text-pop-black clip-diagonal shadow-[4px_4px_0_#ff3366]" : "bg-white text-gray-500 hover:bg-gray-100"
                   )}
                 >
                   {isActive && <div className="absolute inset-0 bg-halftone opacity-30"></div>}
                   
                   <div className="relative z-10 flex items-center justify-center">
-                    <Icon className={cn("w-8 h-8", isActive ? "text-pop-pink" : "group-hover:text-pop-black")} />
+                    <Icon className={cn("w-6 h-6 sm:w-8 sm:h-8", isActive ? "text-pop-pink" : "group-hover:text-pop-black")} />
                   </div>
-                  <span className={cn("relative z-10 text-xl font-black tracking-wider whitespace-nowrap", isActive ? "text-pop-black" : "group-hover:text-pop-black")}>
+                  <span className={cn("relative z-10 text-lg sm:text-xl font-black tracking-wider whitespace-nowrap", isActive ? "text-pop-black" : "group-hover:text-pop-black")}>
                     {item.label}
                   </span>
                   
@@ -225,10 +225,10 @@ function AppContent() {
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               onClick={() => setIsChatOpen(true)}
-              className="fixed bottom-0 left-0 z-50 w-12 h-12 bg-pop-yellow text-pop-black rounded-full pop-border shadow-pop-pink flex items-center justify-center hover:scale-110 transition-transform active:scale-90"
+              className="fixed bottom-2 left-2 sm:bottom-0 sm:left-0 z-50 w-10 h-10 sm:w-12 sm:h-12 bg-pop-yellow text-pop-black rounded-full pop-border shadow-pop-pink flex items-center justify-center hover:scale-110 transition-transform active:scale-90"
               title="展开输入栏"
             >
-              <MessageCircle className="w-6 h-6" />
+              <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
             </motion.button>
           )}
         </AnimatePresence>
