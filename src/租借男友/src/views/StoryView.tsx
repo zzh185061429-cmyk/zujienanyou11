@@ -139,7 +139,7 @@ export function StoryView() {
   }
 
   return (
-    <div className="relative w-full h-full flex flex-col bg-pop-black overflow-hidden pt-[140px] sm:pt-24 md:pt-20 font-sans">
+    <div className="relative w-full h-full flex flex-col bg-pop-black overflow-hidden pt-24 md:pt-20 font-sans">
 
       {/* Background Area */}
       <div className="flex-1 relative bg-pop-black cursor-pointer overflow-hidden" onClick={handleNext}>
@@ -148,7 +148,7 @@ export function StoryView() {
       </div>
 
       {/* Text Box Area */}
-      <div className="relative h-[220px] sm:h-[260px] md:h-[320px] w-full p-3 sm:p-4 md:p-8 shrink-0 cursor-pointer z-20" onClick={handleNext}>
+      <div className="relative h-[280px] md:h-[320px] w-full p-4 md:p-8 shrink-0 cursor-pointer z-20" onClick={handleNext}>
 
         {/* Name Tag + Avatar (仅对话和独白显示) */}
         <AnimatePresence mode="wait">
@@ -158,58 +158,58 @@ export function StoryView() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
-              className="absolute -top-10 sm:-top-12 md:-top-16 left-4 sm:left-6 md:left-12 z-30 flex items-end gap-2 sm:gap-3 drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)]"
+              className="absolute -top-12 md:-top-16 left-6 md:left-12 z-30 flex items-end gap-3 drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)]"
             >
               {currentLine.avatar && (
-                <div className={`w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white pop-border border-2 sm:border-4 flex items-center justify-center overflow-hidden clip-diagonal relative transform -skew-x-6 ${currentLine.color === 'bg-white' ? 'border-pop-yellow' : 'border-pop-black'}`}>
+                <div className={`w-16 h-16 md:w-20 md:h-20 bg-white pop-border border-4 flex items-center justify-center overflow-hidden clip-diagonal relative transform -skew-x-6 ${currentLine.color === 'bg-white' ? 'border-pop-yellow' : 'border-pop-black'}`}>
                   <img src={currentLine.avatar} alt="avatar" className="w-full h-full object-cover object-top scale-110" />
                 </div>
               )}
 
-              <div className={`px-2 sm:px-4 md:px-6 py-0.5 sm:py-1 md:py-2 pop-border border-2 sm:border-4 text-base sm:text-xl md:text-2xl font-black italic -skew-x-6 text-pop-black mb-1 shadow-[2px_2px_0_#fff] ${currentLine.color === 'bg-white' ? 'bg-pop-yellow' : currentLine.color}`}>
+              <div className={`px-4 md:px-6 py-1 md:py-2 pop-border border-4 text-xl md:text-2xl font-black italic -skew-x-6 text-pop-black mb-1 shadow-[2px_2px_0_#fff] ${currentLine.color === 'bg-white' ? 'bg-pop-yellow' : currentLine.color}`}>
                 {displayName(currentLine.speaker!)}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Main Text Box */}
+        {/* Main Text Box — 统一深色背景 */}
         <PopCard
-          className="h-full w-full relative clip-diagonal flex flex-col border-2 sm:border-4 bg-pop-black border-white shadow-[4px_4px_0_#fff] sm:shadow-[8px_8px_0_#fff]"
-          style={{ paddingTop: currentLine.type === 'narrator' ? '1rem' : '2.5rem sm:3rem md:3.5rem' }}
+          className="h-full w-full relative clip-diagonal flex flex-col border-4 bg-pop-black border-white shadow-[8px_8px_0_#fff]"
+          style={{ paddingTop: currentLine.type === 'narrator' ? '1.5rem' : '3.5rem' }}
         >
           <div className="absolute inset-0 bg-halftone opacity-[0.03] pointer-events-none"></div>
 
-          {/* 文本 */}
-          <div className={`flex-1 overflow-y-auto hide-scrollbar text-base sm:text-xl md:text-[26px] font-bold leading-relaxed tracking-wide z-10 ${currentLine.type === 'thought' ? 'text-blue-400' : 'text-white'}`}>
+          {/* 文本: 独白=蓝色, 其余=白色, 无斜体、无引号、无星号 */}
+          <div className={`flex-1 overflow-y-auto hide-scrollbar text-xl md:text-[26px] font-bold leading-relaxed tracking-wide z-10 ${currentLine.type === 'thought' ? 'text-blue-400' : 'text-white'}`}>
             {displayedText}
-            {isTyping && <span className={`inline-block w-2 sm:w-3 h-4 sm:h-6 animate-pulse ml-1 align-middle ${currentLine.type === 'thought' ? 'bg-blue-400' : 'bg-white'}`}></span>}
+            {isTyping && <span className={`inline-block w-3 h-6 animate-pulse ml-1 align-middle ${currentLine.type === 'thought' ? 'bg-blue-400' : 'bg-white'}`}></span>}
           </div>
 
-          <div className="flex justify-between items-end mt-2 sm:mt-4 z-10">
-            <div className="flex gap-1.5 sm:gap-2 flex-wrap">
-              <PopButton variant="ghost" size="sm" className="gap-1.5 sm:gap-2 bg-white/10 text-white hover:bg-white/20 pop-border border-white shadow-none text-xs sm:text-sm px-2 sm:px-3 py-1" onClick={(e) => { e.stopPropagation(); setShowBacklog(true); }}>
-                <History className="w-3 h-3 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">历史</span>
+          <div className="flex justify-between items-end mt-4 z-10">
+            <div className="flex gap-4">
+              <PopButton variant="ghost" size="sm" className="gap-2 bg-white/10 text-white hover:bg-white/20 pop-border border-white shadow-none" onClick={(e) => { e.stopPropagation(); setShowBacklog(true); }}>
+                <History className="w-4 h-4" /> 历史记录
               </PopButton>
-              <PopButton variant="ghost" size="sm" className="gap-1.5 sm:gap-2 bg-white/10 text-white hover:bg-white/20 pop-border border-white shadow-none text-xs sm:text-sm px-2 sm:px-3 py-1" onClick={handlePrev} disabled={currentIndex === 0}>
-                <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">上一句</span>
+              <PopButton variant="ghost" size="sm" className="gap-2 bg-white/10 text-white hover:bg-white/20 pop-border border-white shadow-none" onClick={handlePrev} disabled={currentIndex === 0}>
+                <ChevronLeft className="w-4 h-4" /> 上一句
               </PopButton>
               {/* Auto 模式切换 */}
               <PopButton
                 variant="ghost"
                 size="sm"
-                className={`gap-1.5 sm:gap-2 pop-border border-white shadow-none text-xs sm:text-sm px-2 sm:px-3 py-1 ${isAutoMode ? 'bg-pop-pink text-white hover:bg-pop-pink/80' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                className={`gap-2 pop-border border-white shadow-none ${isAutoMode ? 'bg-pop-pink text-white hover:bg-pop-pink/80' : 'bg-white/10 text-white hover:bg-white/20'}`}
                 onClick={(e) => { e.stopPropagation(); setIsAutoMode(prev => !prev); }}
                 title={isAutoMode ? '关闭 Auto 模式' : '开启 Auto 模式'}
               >
-                {isAutoMode ? <Pause className="w-3 h-3 sm:w-4 sm:h-4" /> : <Play className="w-3 h-3 sm:w-4 sm:h-4" />}
+                {isAutoMode ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                 <span className="hidden sm:inline">{isAutoMode ? 'Auto 开' : 'Auto'}</span>
               </PopButton>
               {/* 倍速切换 */}
               <PopButton
                 variant="ghost"
                 size="sm"
-                className="gap-1.5 sm:gap-2 bg-white/10 text-white hover:bg-white/20 pop-border border-white shadow-none text-xs sm:text-sm px-2 sm:px-3 py-1"
+                className="gap-2 bg-white/10 text-white hover:bg-white/20 pop-border border-white shadow-none"
                 onClick={(e) => {
                   e.stopPropagation();
                   setSpeedLevel(prev => {
@@ -220,7 +220,7 @@ export function StoryView() {
                 }}
                 title={`当前速度: ${speedLevel === 1 ? '普通' : speedLevel === 2 ? '倍速' : '极速'}`}
               >
-                {speedLevel === 4 ? <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-pop-yellow" /> : <FastForward className="w-3 h-3 sm:w-4 sm:h-4" />}
+                {speedLevel === 4 ? <Zap className="w-4 h-4 text-pop-yellow" /> : <FastForward className="w-4 h-4" />}
                 <span className="hidden sm:inline">{speedLevel === 1 ? '普通' : speedLevel === 2 ? '倍速' : '极速'}</span>
               </PopButton>
             </div>
@@ -229,7 +229,7 @@ export function StoryView() {
                 animate={{ x: [0, 8, 0] }}
                 transition={{ repeat: Infinity, duration: 1 }}
               >
-                <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-pop-yellow" />
+                <ChevronRight className="w-10 h-10 text-pop-yellow" />
               </motion.div>
             )}
           </div>

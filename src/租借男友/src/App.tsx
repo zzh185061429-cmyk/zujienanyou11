@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HUD } from './components/HUD';
 import { ToastProvider } from './components/ToastProvider';
 import { ChatBar } from './components/ChatBar';
@@ -45,7 +45,7 @@ function AppContent() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [scale, setScale] = useState(1);
-  const { isEyeCareMode, isViewingHistory, viewingFloorId, lastAssistantFloorId, goToLatest } = useGameContext();
+  const { isEyeCareMode } = useGameContext();
   const { showToast } = useToast();
 
   // 检测脚本模式：通过 __TAVERN_SCRIPT_MODE__ 标记区分全屏策略和 CSS
@@ -100,12 +100,11 @@ function AppContent() {
   const handleRegenerate = async () => {
     setRegenerating(true);
     try {
-      const result = await regenerateCurrentFloor(viewingFloorId ?? lastAssistantFloorId);
+      const result = await regenerateCurrentFloor(null);
       if (result.success) {
         showToast('已重新生成本楼层', 'normal');
-        eventEmit('story_interaction_done');
       } else {
-        showToast(result.error || '重新生成失败', 'alert');
+        showToast('重新生成失败', 'alert');
       }
     } catch (e: any) {
       showToast(e?.message || '重新生成失败', 'alert');
@@ -118,127 +117,141 @@ function AppContent() {
     { id: 'archive', label: '角色图鉴', icon: Users },
   ] as const;
 
+  // 是否是手机端（scale < 1 表示屏幕比设计尺寸小）
+  const isMobile = scale < 1;
+
   return (
     <div 
       className="w-full h-full flex items-center justify-center overflow-hidden"
       style={{ backgroundColor: '#1a1a1a' }}
     >
+      {/* 整体缩放容器：手机端等比例缩小填满全屏，PC 端保持原尺寸 */}
       <div 
-        className={cn(
-          "flex flex-col bg-pop-black overflow-hidden font-sans relative transition-all duration-300 w-full h-full",
-        )}
-        style={{ filter: isEyeCareMode ? 'sepia(0.2) brightness(0.9) contrast(0.95)' : 'none' }}
+        className="relative"
+        style={{ 
+          width: isMobile ? `${1280}px` : '100%', 
+          height: isMobile ? `${720}px` : '100%',
+          transform: isMobile ? `scale(${scale})` : 'none',
+          transformOrigin: 'center center',
+        }}
       >
-        
-        {/* Global HUD — fold button is inside HUD left column */}
-        <HUD
-          isSidebarOpen={isSidebarOpen}
-          onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-          isFullscreen={isFullscreen}
-          onToggleFullscreen={toggleFullscreen}
-          onOpenThinking={() => setIsThinkingOpen(true)}
-          onOpenVariables={() => setIsVariableViewerOpen(true)}
-          onOpenReading={() => setIsReadingOpen(true)}
-          onOpenDelete={() => setIsDeleteOpen(true)}
-          onRegenerate={handleRegenerate}
-          regenerating={regenerating}
-          isGenerating={isGenerating}
-        />
-
-        {/* Sidebar — slides in from left via translate-x */}
-        <nav className={cn(
-          "z-40 flex flex-col justify-start items-stretch bg-pop-black border-r-4 border-white h-full w-64 sm:w-72 fixed top-0 left-0 transition-transform duration-300 pt-16",
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}>
-          {/* Close button inside sidebar */}
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="absolute top-3 right-3 text-white hover:text-pop-pink transition-colors z-50"
-          >
-            <X className="w-6 h-6" />
-          </button>
-          {/* Logo */}
-          <div className="flex flex-col items-center justify-center p-4 sm:p-6 mb-6 sm:mb-8 bg-stripes-cyan-pink clip-diagonal mx-4 shadow-pop-pink pop-border">
-            <h1 className="text-2xl sm:text-3xl font-black italic text-white text-stroke-sm -skew-x-12">DEBT</h1>
-            <h1 className="text-3xl sm:text-4xl font-black italic text-pop-yellow text-stroke -skew-x-12 mt-1 drop-shadow-[4px_4px_0_#ff3366]">CLUB</h1>
-          </div>
-
-          <div className="flex flex-col w-full px-4 gap-3 sm:gap-4 h-auto items-stretch">
-            {navItems.map((item) => {
-              const isActive = activeTab === item.id;
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setIsSidebarOpen(false);
-                  }}
-                  className={cn(
-                    "relative flex-none flex flex-row items-center justify-start gap-3 sm:gap-4 p-3 sm:p-4 transition-all duration-200 group pop-border overflow-hidden",
-                    isActive ? "bg-pop-yellow text-pop-black clip-diagonal shadow-[4px_4px_0_#ff3366]" : "bg-white text-gray-500 hover:bg-gray-100"
-                  )}
-                >
-                  {isActive && <div className="absolute inset-0 bg-halftone opacity-30"></div>}
-                  
-                  <div className="relative z-10 flex items-center justify-center">
-                    <Icon className={cn("w-6 h-6 sm:w-8 sm:h-8", isActive ? "text-pop-pink" : "group-hover:text-pop-black")} />
-                  </div>
-                  <span className={cn("relative z-10 text-lg sm:text-xl font-black tracking-wider whitespace-nowrap", isActive ? "text-pop-black" : "group-hover:text-pop-black")}>
-                    {item.label}
-                  </span>
-                  
-                  {isActive && <motion.div layoutId="nav-indicator" className="absolute top-0 bottom-0 left-0 w-2 bg-pop-pink" />}
-                </button>
-              );
-            })}
-          </div>
-        </nav>
-
-        {/* Main Content Area */}
-        <main className="flex-1 relative w-full min-h-full overflow-hidden bg-white">
-          {activeTab === 'story' && <StoryView />}
-          {activeTab === 'dispatch' && <DispatchView />}
-          {activeTab === 'archive' && <ArchiveView />}
-        </main>
-
-        {/* 底部输入栏 — 可折叠 */}
-        <AnimatePresence>
-          {isChatOpen && (
-            <motion.div
-              initial={{ y: '100%', opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: '100%', opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 z-50"
-            >
-              <ChatBar onClose={() => setIsChatOpen(false)} onGeneratingChange={setIsGenerating} />
-            </motion.div>
+        <div 
+          className={cn(
+            "flex flex-col bg-pop-black overflow-hidden font-sans relative transition-all duration-300 w-full h-full",
           )}
-        </AnimatePresence>
+          style={{ filter: isEyeCareMode ? 'sepia(0.2) brightness(0.9) contrast(0.95)' : 'none' }}
+        >
+          
+          {/* Global HUD — fold button is inside HUD left column */}
+          <HUD
+            isSidebarOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            isFullscreen={isFullscreen}
+            onToggleFullscreen={toggleFullscreen}
+            onOpenThinking={() => setIsThinkingOpen(true)}
+            onOpenVariables={() => setIsVariableViewerOpen(true)}
+            onOpenReading={() => setIsReadingOpen(true)}
+            onOpenDelete={() => setIsDeleteOpen(true)}
+            onRegenerate={handleRegenerate}
+            regenerating={regenerating}
+            isGenerating={isGenerating}
+          />
 
-        {/* 折叠态浮动按钮 */}
-        <AnimatePresence>
-          {!isChatOpen && (
-            <motion.button
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              onClick={() => setIsChatOpen(true)}
-              className="fixed bottom-2 left-2 sm:bottom-0 sm:left-0 z-50 w-10 h-10 sm:w-12 sm:h-12 bg-pop-yellow text-pop-black rounded-full pop-border shadow-pop-pink flex items-center justify-center hover:scale-110 transition-transform active:scale-90"
-              title="展开输入栏"
+          {/* Sidebar — slides in from left via translate-x */}
+          <nav className={cn(
+            "z-40 flex flex-col justify-start items-stretch bg-pop-black border-r-4 border-white h-full w-64 fixed top-0 left-0 transition-transform duration-300 pt-16",
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          )}>
+            {/* Close button inside sidebar */}
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="absolute top-3 right-3 text-white hover:text-pop-pink transition-colors z-50"
             >
-              <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-            </motion.button>
-          )}
-        </AnimatePresence>
+              <X className="w-6 h-6" />
+            </button>
+            {/* Logo */}
+            <div className="flex flex-col items-center justify-center p-6 mb-8 bg-stripes-cyan-pink clip-diagonal mx-4 shadow-pop-pink pop-border">
+              <h1 className="text-3xl font-black italic text-white text-stroke-sm -skew-x-12">DEBT</h1>
+              <h1 className="text-4xl font-black italic text-pop-yellow text-stroke -skew-x-12 mt-1 drop-shadow-[4px_4px_0_#ff3366]">CLUB</h1>
+            </div>
 
-        {/* 全局 Modals */}
-        <ThinkingChainModal isOpen={isThinkingOpen} onClose={() => setIsThinkingOpen(false)} />
-        <VariableViewerModal isOpen={isVariableViewerOpen} onClose={() => setIsVariableViewerOpen(false)} />
-        <ReadingModal isOpen={isReadingOpen} onClose={() => setIsReadingOpen(false)} />
-        <DeleteFloorsModal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} />
+            <div className="flex flex-col w-full px-4 gap-4 h-auto items-stretch">
+              {navItems.map((item) => {
+                const isActive = activeTab === item.id;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setIsSidebarOpen(false);
+                    }}
+                    className={cn(
+                      "relative flex-none flex flex-row items-center justify-start gap-4 p-4 transition-all duration-200 group pop-border overflow-hidden",
+                      isActive ? "bg-pop-yellow text-pop-black clip-diagonal shadow-[4px_4px_0_#ff3366]" : "bg-white text-gray-500 hover:bg-gray-100"
+                    )}
+                  >
+                    {isActive && <div className="absolute inset-0 bg-halftone opacity-30"></div>}
+                    
+                    <div className="relative z-10 flex items-center justify-center">
+                      <Icon className={cn("w-8 h-8", isActive ? "text-pop-pink" : "group-hover:text-pop-black")} />
+                    </div>
+                    <span className={cn("relative z-10 text-xl font-black tracking-wider whitespace-nowrap", isActive ? "text-pop-black" : "group-hover:text-pop-black")}>
+                      {item.label}
+                    </span>
+                    
+                    {isActive && <motion.div layoutId="nav-indicator" className="absolute top-0 bottom-0 left-0 w-2 bg-pop-pink" />}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
 
+          {/* Main Content Area */}
+          <main className="flex-1 relative w-full min-h-full overflow-hidden bg-white">
+            {activeTab === 'story' && <StoryView />}
+            {activeTab === 'dispatch' && <DispatchView />}
+            {activeTab === 'archive' && <ArchiveView />}
+          </main>
+
+          {/* 底部输入栏 — 可折叠 */}
+          <AnimatePresence>
+            {isChatOpen && (
+              <motion.div
+                initial={{ y: '100%', opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: '100%', opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed bottom-0 left-0 right-0 z-50"
+              >
+                <ChatBar onClose={() => setIsChatOpen(false)} onGeneratingChange={setIsGenerating} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* 折叠态浮动按钮 */}
+          <AnimatePresence>
+            {!isChatOpen && (
+              <motion.button
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                onClick={() => setIsChatOpen(true)}
+                className="fixed bottom-0 left-0 z-50 w-12 h-12 bg-pop-yellow text-pop-black rounded-full pop-border shadow-pop-pink flex items-center justify-center hover:scale-110 transition-transform active:scale-90"
+                title="展开输入栏"
+              >
+                <MessageCircle className="w-6 h-6" />
+              </motion.button>
+            )}
+          </AnimatePresence>
+
+          {/* 全局 Modals */}
+          <ThinkingChainModal isOpen={isThinkingOpen} onClose={() => setIsThinkingOpen(false)} />
+          <VariableViewerModal isOpen={isVariableViewerOpen} onClose={() => setIsVariableViewerOpen(false)} />
+          <ReadingModal isOpen={isReadingOpen} onClose={() => setIsReadingOpen(false)} />
+          <DeleteFloorsModal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} />
+
+        </div>
       </div>
     </div>
   );
