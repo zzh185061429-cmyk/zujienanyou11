@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Database, ChevronDown, ChevronRight, Circle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useGameContext } from '../state/GameContext';

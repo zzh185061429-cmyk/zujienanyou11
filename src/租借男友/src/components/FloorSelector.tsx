@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Layers, ChevronDown, CornerDownRight, Navigation } from 'lucide-react';
 import { PopCard } from './ui/PopCard';
 import { getAssistantFloors } from '../utils/floorNav';

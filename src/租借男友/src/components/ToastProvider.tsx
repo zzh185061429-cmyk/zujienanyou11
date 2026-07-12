@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { PopCard } from "./ui/PopCard";
 import { AlertTriangle, Info } from "lucide-react";

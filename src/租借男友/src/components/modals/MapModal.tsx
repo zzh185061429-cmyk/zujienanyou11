@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
+import { motion } from "motion/react";
 import { X, Map as MapIcon, MapPin, Building, Trees, Coffee } from "lucide-react";
 import { useGameContext } from "../../state/GameContext";
 import { MAP_LOCATIONS } from "../../data/gameData";

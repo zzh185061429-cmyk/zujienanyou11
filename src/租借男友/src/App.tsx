@@ -42,10 +42,9 @@ function AppContent() {
   const [isReadingOpen, setIsReadingOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [scale, setScale] = useState(1);
-  const { isEyeCareMode } = useGameContext();
+  const { isEyeCareMode, isGenerating } = useGameContext();
   const { showToast } = useToast();
 
   // 检测脚本模式：通过 __TAVERN_SCRIPT_MODE__ 标记区分全屏策略和 CSS
@@ -224,7 +223,7 @@ function AppContent() {
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className="fixed bottom-0 left-0 right-0 z-50"
               >
-                <ChatBar onClose={() => setIsChatOpen(false)} onGeneratingChange={setIsGenerating} />
+                <ChatBar onClose={() => setIsChatOpen(false)} />
               </motion.div>
             )}
           </AnimatePresence>

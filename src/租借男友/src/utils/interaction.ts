@@ -28,8 +28,6 @@ type ParsedResponse = {
 function extractContent(raw: string): ParsedResponse {
   const maintextMatch = raw.match(/<maintext>([\s\S]*?)<\/maintext>/i);
   if (maintextMatch) {
-    // 剥离标签后的剩余部分仍需要保留用于变量解析
-    const withoutMaintext = raw.replace(/<maintext>[\s\S]*?<\/maintext>/gi, '');
     return {
       maintext: maintextMatch[1].trim(),
       raw: raw, // 变量命令可能散落在任意位置，保留全文
@@ -190,14 +188,12 @@ export async function regenerateCurrentFloor(assistantFloorId: number | null): P
     const { maintext, raw: parsedWithVars } = extractContent(filtered);
 
     // 步骤 5：解析变量
-    let mvuData: Mvu.MvuData;
     try {
       await waitGlobalInitialized('Mvu');
       const oldData = Mvu.getMvuData({ type: 'message', message_id: prevFloorId });
-      mvuData = await Mvu.parseMessage(parsedWithVars, oldData);
+      await Mvu.parseMessage(parsedWithVars, oldData);
     } catch {
-      const oldData = Mvu.getMvuData({ type: 'message', message_id: prevFloorId });
-      mvuData = oldData;
+      /* MVU 解析失败不影响继续 */
     }
 
     // 步骤 6：创建新的 assistant 楼层

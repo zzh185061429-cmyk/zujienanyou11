@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { PopCard } from "../components/ui/PopCard";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Star, Heart, AlertCircle, Quote } from "lucide-react";
+import { X, Star, Heart, AlertCircle } from "lucide-react";
 
 const CHARACTERS = [
   { 

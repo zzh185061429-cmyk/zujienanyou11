@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PopCard } from "../components/ui/PopCard";
 import { PopButton } from "../components/ui/PopButton";
 import { Briefcase, Skull, Clock, Dices } from "lucide-react";
@@ -147,7 +147,7 @@ export function DispatchView() {
   };
 
   // 生成撞单重叠时间：time2 在 time1 服务进行期间插入，保证时间有重合
-  const generateOverlapTimes = (dur1Hours: number, dur2Hours: number) => {
+  const generateOverlapTimes = (dur1Hours: number, _dur2Hours: number) => {
     for (let i = 0; i < 10; i++) {
       const time1 = generateScheduledTime();
       const time1End = new Date(time1.getTime() + dur1Hours * 60 * 60 * 1000);
@@ -220,10 +220,10 @@ export function DispatchView() {
         durationMinutes: maxMinutes,
       }, {
         模式: '撞单',
-        客户1: dispatchResult.char1,
-        客户2: dispatchResult.char2,
-        任务类型1: dispatchResult.task1,
-        任务类型2: dispatchResult.task2,
+        客户1: dispatchResult.char1 || undefined,
+        客户2: dispatchResult.char2 || undefined,
+        任务类型1: dispatchResult.task1 || undefined,
+        任务类型2: dispatchResult.task2 || undefined,
         预约时间1: t1,
         服务时长1: dispatchResult.duration1.hours,
         价格1: dispatchResult.duration1.price,
@@ -231,8 +231,6 @@ export function DispatchView() {
         服务时长2: dispatchResult.duration2.hours,
         价格2: dispatchResult.duration2.price,
       });
-      const price1Str = dispatchResult.duration1.price.toLocaleString();
-      const price2Str = dispatchResult.duration2.price.toLocaleString();
       const totalPriceStr = (dispatchResult.duration1.price + dispatchResult.duration2.price).toLocaleString();
       const dialogText = [
         `📋${dispatchResult.char1}预约了${t1}的${dispatchResult.task1}任务，同时${dispatchResult.char2}预约了${t2}的${dispatchResult.task2}任务，服务时长分别为${dispatchResult.duration1.hours}小时和${dispatchResult.duration2.hours}小时，预期总收入¥${totalPriceStr}`,
@@ -464,7 +462,7 @@ export function DispatchView() {
       <PopButton 
         onClick={handleRoll} 
         disabled={!!currentOrder}
-        variant={currentOrder ? "ghost" : "cyan"} 
+        variant={currentOrder ? "ghost" : "primary"} 
         size="lg" 
         className={`shadow-[8px_8px_0_#ff3366] flex items-center gap-2 border-4 border-pop-black clip-diagonal transition-all ${
           currentOrder ? 'opacity-50 cursor-not-allowed bg-gray-400 border-gray-600 shadow-none' : 'hover:scale-110 active:scale-95 animate-pulse'

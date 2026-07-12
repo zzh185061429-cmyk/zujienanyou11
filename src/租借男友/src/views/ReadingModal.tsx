@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, BookText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { PopCard } from '../components/ui/PopCard';
 import { PopButton } from '../components/ui/PopButton';
 
 type ReadingEntry = {
