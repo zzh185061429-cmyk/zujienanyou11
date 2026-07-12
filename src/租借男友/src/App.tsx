@@ -20,14 +20,11 @@ import { MessageSquare, Calendar, Users, X, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './utils';
 
-// 计算等比例缩放比：手机端缩小，PC 端保持 1
+// 计算缩放比：按宽度填满屏幕，高度不限制（允许滚动）
 function calcScale(): number {
   const designW = 1280;
-  const designH = 720;
   const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  // 先填满屏幕，再整体缩放
-  const scale = Math.min(vw / designW, vh / designH);
+  const scale = vw / designW;
   // PC 端（屏幕足够大）不缩放，保持 1
   return scale >= 1 ? 1 : scale;
 }
@@ -119,22 +116,27 @@ function AppContent() {
     { id: 'archive', label: '角色图鉴', icon: Users },
   ] as const;
 
-  // 是否是手机端（scale < 1 表示屏幕比设计尺寸小）
-  const isMobile = scale < 1;
-
   return (
     <div 
-      className="w-full h-full flex items-center justify-center overflow-hidden"
+      className="w-full min-h-full flex justify-center overflow-x-hidden overflow-y-auto"
       style={{ backgroundColor: '#1a1a1a' }}
     >
       <div 
-        className="relative w-full h-full"
+        className="relative w-full"
+        style={{ 
+          transform: `scale(${scale})`,
+          transformOrigin: 'top center',
+          minHeight: `${100 / scale}%`,
+        }}
       >
         <div 
           className={cn(
-            "flex flex-col bg-pop-black overflow-hidden font-sans relative transition-all duration-300 w-full h-full",
+            "flex flex-col bg-pop-black overflow-hidden font-sans relative transition-all duration-300 w-full",
           )}
-          style={{ filter: isEyeCareMode ? 'sepia(0.2) brightness(0.9) contrast(0.95)' : 'none' }}
+          style={{ 
+            filter: isEyeCareMode ? 'sepia(0.2) brightness(0.9) contrast(0.95)' : 'none',
+            minHeight: `${720 / Math.max(scale, 0.001)}px`,
+          }}
         >
           
           {/* Global HUD — fold button is inside HUD left column */}
@@ -167,7 +169,7 @@ function AppContent() {
             {/* Logo */}
             <div className="flex flex-col items-center justify-center p-6 mb-8 bg-stripes-cyan-pink clip-diagonal mx-4 shadow-pop-pink pop-border">
               <h1 className="text-3xl font-black italic text-white text-stroke-sm -skew-x-12">DEBT</h1>
-              <h1 className="text-4xl font-black italic text-pop-yellow text-stroke -skew-x-12 mt-1 drop-shadow-[4px_4px_0_#ff3366]">CLUB</h1>
+              <h1 className="text-4xl font-black italic text-pop-yellow text-stroke -skew-x-12 mt-1 drop-shadow-[0.25rem_0.25rem_0_#ff3366]">CLUB</h1>
             </div>
 
             <div className="flex flex-col w-full px-4 gap-4 h-auto items-stretch">

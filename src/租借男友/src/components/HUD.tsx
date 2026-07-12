@@ -115,7 +115,7 @@ export function HUD({ isSidebarOpen, onToggleSidebar, isFullscreen, onToggleFull
             <div className="absolute inset-0 bg-halftone opacity-50"></div>
             <div className="relative z-10 flex justify-between items-end mb-1">
               <span className="text-pop-pink font-black text-lg text-stroke-sm italic">REMAINING DEBT</span>
-              <span className="text-xl font-black text-pop-yellow drop-shadow-[2px_2px_0_#ff3366]">
+              <span className="text-xl font-black text-pop-yellow drop-shadow-[0.125rem_0.125rem_0_#ff3366]">
                 ¥{remainingDebt.toLocaleString()}
               </span>
             </div>
@@ -130,11 +130,11 @@ export function HUD({ isSidebarOpen, onToggleSidebar, isFullscreen, onToggleFull
           </PopCard>
 
           {/* Right column: 当前角色 / 任务 */}
-          <div className="flex flex-col gap-2 shrink-0 pointer-events-auto min-w-[160px]">
+          <div className="flex flex-col gap-2 shrink-0 pointer-events-auto min-w-[10rem]">
             {/* 状态灯 */}
             <PopCard
               className={cn(
-                "py-1 px-3 flex items-center justify-center gap-2 clip-diagonal border-2 border-white shadow-[2px_2px_0_#1a1a1a] transition-colors duration-300",
+                "py-1 px-3 flex items-center justify-center gap-2 clip-diagonal border-2 border-white shadow-[0.125rem_0.125rem_0_#1a1a1a] transition-colors duration-300",
                 isGenerating ? "bg-red-500 text-white" : "bg-green-500 text-white"
               )}
               title={isGenerating ? "AI 生成中..." : "AI 空闲"}
@@ -169,11 +169,11 @@ export function HUD({ isSidebarOpen, onToggleSidebar, isFullscreen, onToggleFull
                   exit={{ y: 50, opacity: 0 }}
                   className="flex flex-col gap-2"
                 >
-                  <PopCard className="py-1 px-3 flex items-center gap-2 bg-pop-pink clip-diagonal border-2 border-pop-black shadow-[2px_2px_0_#1a1a1a]">
+                  <PopCard className="py-1 px-3 flex items-center gap-2 bg-pop-pink clip-diagonal border-2 border-pop-black shadow-[0.125rem_0.125rem_0_#1a1a1a]">
                     <User className="w-4 h-4 shrink-0 text-white" />
                     <span className="font-bold text-sm text-white whitespace-nowrap overflow-hidden text-ellipsis">当前: {currentOrder.charName}</span>
                   </PopCard>
-                  <PopCard className="py-1 px-3 flex items-center gap-2 bg-white clip-diagonal border-2 border-pop-black shadow-[2px_2px_0_#1a1a1a] text-pop-pink">
+                  <PopCard className="py-1 px-3 flex items-center gap-2 bg-white clip-diagonal border-2 border-pop-black shadow-[0.125rem_0.125rem_0_#1a1a1a] text-pop-pink">
                     <Briefcase className="w-4 h-4 shrink-0 text-pop-black" />
                     <span className="font-bold text-sm text-pop-black whitespace-nowrap overflow-hidden text-ellipsis">{currentOrder.task}</span>
                   </PopCard>
